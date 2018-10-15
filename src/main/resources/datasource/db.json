@@ -1,0 +1,32 @@
+[
+  {
+    "id": 1,
+    "fullname": "Employee A",
+    "age": 24,
+    "salary": 4500
+  },
+  {
+    "id": 2,
+    "fullname": "Employee B",
+    "age": 32,
+    "salary": 6500
+  },
+  {
+    "id": 3,
+    "fullname": "Employee C",
+    "age": 28,
+    "salary": 6500
+  },
+  {
+    "id": 4,
+    "fullname": "Leanne Graham",
+    "age": 31,
+    "salary": 10000
+  },
+  {
+    "id": 5,
+    "fullname": "Ervin Howell",
+    "age": 20,
+    "salary": 9000
+  }
+]
