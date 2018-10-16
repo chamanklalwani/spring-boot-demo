@@ -1,5 +1,9 @@
 # Spring Boot Demo Application
 
+[![Build Status](https://travis-ci.org/chamanklalwani/spring-boot-demo.svg?branch=master)](https://travis-ci.org/chamanklalwani/spring-boot-demo)
+![Packagist](https://img.shields.io/packagist/v/chamanklalwani/spring-boot-demo.svg)
+
+
 A spring boot and maven based demo project having REST endpoints to modify a ```.json``` file at a local file system
 which acts like a database. Project has all the endpoints for ```CRUD``` operations, which would
 performed on the ```.json``` file.
