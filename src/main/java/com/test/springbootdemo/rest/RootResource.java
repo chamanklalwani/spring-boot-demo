@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
 @CrossOrigin(origins = "*")
 @RestController
 @RequestMapping("/api/v1")
-@Api(value = "Employee Rest API", description = "Defines endpoints for the root resource.")
+@Api(value = "Root Resource", description = "Defines endpoints for the root resource.")
 public class RootResource {
 
     @RequestMapping(value = "/hello", method = RequestMethod.GET)

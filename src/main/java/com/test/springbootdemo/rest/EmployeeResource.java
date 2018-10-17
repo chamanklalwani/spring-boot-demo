@@ -19,8 +19,8 @@ import com.test.springbootdemo.core.util.AppUtil;
 import com.test.springbootdemo.core.util.ApiResponse;
 
 @RestController
-@RequestMapping("/api/v1")
-@Api(value = "Employee Rest API", description = "Defines endpoints for the employee resource.")
+@RequestMapping("/api/v1/employee")
+@Api(value = "Employee Resource", description = "Defines endpoints for the employee resource.")
 public class EmployeeResource {
 
     public static final Logger logger = LoggerFactory.getLogger(EmployeeResource.class);
@@ -36,9 +36,9 @@ public class EmployeeResource {
      * Retrieve All Employees
      * @return
      */
-    @RequestMapping(value = "/employee", method = RequestMethod.GET)
     @ApiOperation(value = "Returns the list of all employees.")
-    public ResponseEntity<List<Employee>> getAllEmployees() {
+    @RequestMapping(method = RequestMethod.GET)
+    public ResponseEntity<List<Employee>> getEmployees() {
         List<Employee> employees = employeeService.getAllEmployees();
         if (employees.isEmpty()) {
             return new ResponseEntity(new ApiResponse("No employees found.", true),
@@ -53,8 +53,8 @@ public class EmployeeResource {
      *      Specifies employee id to fetch
      * @return
      */
-    @RequestMapping(value = "/employee/{id}", method = RequestMethod.GET)
     @ApiOperation(value = "Returns the employee with given id.")
+    @RequestMapping(value = "/{id}", method = RequestMethod.GET)
     public ResponseEntity<?> getEmployee(@PathVariable("id") Integer id) {
         logger.info("Fetching Employee with id {}", id);
         Employee employee = employeeService.getById(id);
@@ -73,7 +73,7 @@ public class EmployeeResource {
      *      Employee object to create
      * @return
      */
-    @RequestMapping(value = "/employee", method = RequestMethod.POST)
+    @RequestMapping(value = "", method = RequestMethod.POST)
     @ApiOperation(value = "Creates an new employee with the given body.")
     public ResponseEntity<?> createEmployee(@RequestBody Employee employee) {
         logger.info("Creating Employee : {}", employee);
@@ -94,7 +94,7 @@ public class EmployeeResource {
      *      Employee object to update
      * @return
      */
-    @RequestMapping(value = "/employee/{id}", method = RequestMethod.PUT)
+    @RequestMapping(value = "/{id}", method = RequestMethod.PUT)
     @ApiOperation(value = "Updates the employee with the given id by the given request.")
     public ResponseEntity<?> updateEmployee(@PathVariable("id") Integer id, @RequestBody Employee employee) {
         logger.info("Updating Employee with id {}", id);
@@ -121,7 +121,7 @@ public class EmployeeResource {
      *      Specifies employee id to delete
      * @return
      */
-    @RequestMapping(value = "/employee/{id}", method = RequestMethod.DELETE)
+    @RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
     @ApiOperation(value = "Deletes the employee with the given id.")
     public ResponseEntity<?> deleteEmployee(@PathVariable("id") Integer id) {
         logger.info("Fetching & Deleting Employee with id {}", id);
@@ -142,7 +142,7 @@ public class EmployeeResource {
      * Deletes All Employees
      * @return
      */
-    @RequestMapping(value = "/employee", method = RequestMethod.DELETE)
+    @RequestMapping(value = "", method = RequestMethod.DELETE)
     @ApiOperation(value = "Deletes all the existing employees.")
     public ResponseEntity<Employee> deleteAllEmployees() {
         logger.info("Deleting All Employees");
@@ -157,7 +157,7 @@ public class EmployeeResource {
      *      Specifies (SearchCriteria) object
      * @return
      */
-    @RequestMapping(value = "/employee/filterByAge", method = RequestMethod.POST)
+    @RequestMapping(value = "/filterByAge", method = RequestMethod.POST)
     @ApiOperation(value = "Filter & sort employees by age.")
     public ResponseEntity<List<Employee>> filterByAge(@RequestBody SearchCriteria searchCriteria) {
         logger.info("filterByAge() method called");
