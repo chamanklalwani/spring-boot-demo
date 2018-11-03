@@ -13,4 +13,12 @@ public class AppUtil {
 
     @Value("${app.datasource.filename}")
     public static String datasourceFilename;
+
+    public static String getDatasourceDirectory() {
+        return "/" + datasourceDirectory;
+    }
+
+    public static String getDatasourceFilePath() {
+        return "/" + datasourceDirectory + "/" + datasourceFilename;
+    }
 }

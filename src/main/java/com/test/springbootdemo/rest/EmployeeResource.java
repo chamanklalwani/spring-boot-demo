@@ -1,6 +1,7 @@
 package com.test.springbootdemo.rest;
 
 
+import com.test.springbootdemo.core.dto.EmployeeDto;
 import com.test.springbootdemo.core.util.SearchCriteria;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -11,6 +12,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import com.test.springbootdemo.core.model.Employee;
@@ -30,21 +32,18 @@ public class EmployeeResource {
     @Autowired
     private AppUtil appUtil;
 
-
-
     /**
      * Retrieve All Employees
      * @return
      */
     @ApiOperation(value = "Returns the list of all employees.")
     @RequestMapping(method = RequestMethod.GET)
-    public ResponseEntity<List<Employee>> getEmployees() {
-        List<Employee> employees = employeeService.getAllEmployees();
-        if (employees.isEmpty()) {
-            return new ResponseEntity(new ApiResponse("No employees found.", true),
-                    HttpStatus.OK);
+    public ResponseEntity<?> getEmployees() {
+        List<EmployeeDto> employeeDto = employeeService.getAllEmployees();
+        if (employeeDto.isEmpty()) {
+            return new ResponseEntity<>(new ApiResponse("No Employee exists.", true), HttpStatus.OK);
         }
-        return new ResponseEntity<>(employees, HttpStatus.OK);
+        return new ResponseEntity<>(employeeDto, HttpStatus.OK);
     }
 
     /**
@@ -159,13 +158,14 @@ public class EmployeeResource {
      */
     @RequestMapping(value = "/filterByAge", method = RequestMethod.POST)
     @ApiOperation(value = "Filter & sort employees by age.")
-    public ResponseEntity<List<Employee>> filterByAge(@RequestBody SearchCriteria searchCriteria) {
+    public ResponseEntity<?> filterByAge(@RequestBody SearchCriteria searchCriteria) {
         logger.info("filterByAge() method called");
-        List<Employee> employees = employeeService.filterEmployeesByAge(searchCriteria);
-        if (employees != null && employees.size() > 0) {
-            return new ResponseEntity<>(employees, HttpStatus.OK);
+        List<EmployeeDto> employeeDto = employeeService.filterEmployeesByAge(searchCriteria);
+        if (employeeDto != null && employeeDto.size() > 0) {
+            return new ResponseEntity<>(employeeDto, HttpStatus.OK);
         }
         return new ResponseEntity(new ApiResponse("No employees found with your search criteria", true),
                 HttpStatus.OK);
+
     }
 }

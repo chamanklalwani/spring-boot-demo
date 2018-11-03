@@ -1,5 +1,6 @@
 package com.test.springbootdemo.core.service;
 
+import com.test.springbootdemo.core.dto.EmployeeDto;
 import com.test.springbootdemo.core.model.Employee;
 import com.test.springbootdemo.core.util.SearchCriteria;
 
@@ -17,7 +18,7 @@ public interface EmployeeService {
 
     void deleteEmployeeById(Integer id);
 
-    List<Employee> getAllEmployees();
+    List<EmployeeDto> getAllEmployees();
 
     void deleteAllEmployees();
 
@@ -25,5 +26,5 @@ public interface EmployeeService {
 
     void saveEmployees(List<Employee> employees);
 
-    List<Employee> filterEmployeesByAge(SearchCriteria searchCriteria);
+    List<EmployeeDto> filterEmployeesByAge(SearchCriteria searchCriteria);
 }

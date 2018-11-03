@@ -4,19 +4,16 @@ import com.fasterxml.jackson.core.util.DefaultPrettyPrinter;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 import com.test.springbootdemo.core.model.Employee;
-import com.test.springbootdemo.core.util.AppUtil;
 import com.test.springbootdemo.core.util.SearchCriteria;
 import com.test.springbootdemo.core.util.Util;
 import com.test.springbootdemo.rest.EmployeeResource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.net.URL;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -27,9 +24,8 @@ public class EmployeeRepository {
 
     private static volatile EmployeeRepository singleton = null;
     static Map<Integer, Employee> employeesMap = new HashMap<>();
-    ObjectMapper mapper = new ObjectMapper();
-    @Autowired
-    private AppUtil appUtil;
+    private ObjectMapper mapper = new ObjectMapper();
+
     public static final Logger logger = LoggerFactory.getLogger(EmployeeResource.class);
 
     //making constructor as private to prevent access to outsiders
@@ -143,9 +139,7 @@ public class EmployeeRepository {
      */
     private void synchronizeJsonDatasource() {
         try {
-            String filepath = "/datasource/db.json";
-            URL resourceUrl = getClass().getResource(filepath);
-            File file = new File(resourceUrl.toURI());
+            File file = new File("/datasource/db.json");
             OutputStream output = new FileOutputStream(file);
             ObjectWriter writer = mapper.writer(new DefaultPrettyPrinter());
             writer.writeValue(output, getAllEmployees());
@@ -212,16 +206,16 @@ public class EmployeeRepository {
                 }
             }
 
-            if (employees.size() > 0) {
-                if (searchCriteria.getSortOrder().equalsIgnoreCase("desc")) {
-                    employees.stream()
-                            .sorted(Comparator.comparing(Employee::getAge).reversed())
-                            .collect(Collectors.toList());
-                } else if (searchCriteria.getSortOrder().equalsIgnoreCase("asc")) {
-                    employees.stream()
-                            .sorted(Comparator.comparing(Employee::getAge))
-                            .collect(Collectors.toList());
-                }
+            String sortOrder = searchCriteria.getSortOrder();
+            if (employees.size() > 0 && !Util.isNullOrEmpty(sortOrder) && sortOrder.equalsIgnoreCase("desc")) {
+                employees.stream()
+                        .sorted(Comparator.comparing(Employee::getAge).reversed())
+                        .collect(Collectors.toList());
+            } else {
+                // default sort oder is ASC
+                employees.stream()
+                        .sorted(Comparator.comparing(Employee::getAge))
+                        .collect(Collectors.toList());
             }
 
             return employees;

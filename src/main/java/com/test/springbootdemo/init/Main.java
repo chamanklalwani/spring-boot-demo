@@ -1,32 +1,42 @@
 package com.test.springbootdemo.init;
 
-import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.core.util.DefaultPrettyPrinter;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.test.springbootdemo.core.model.Employee;
-import com.test.springbootdemo.core.service.EmployeeService;
+import com.fasterxml.jackson.databind.ObjectWriter;
+import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.boot.CommandLineRunner;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.boot.web.servlet.support.SpringBootServletInitializer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpRequest;
 import org.springframework.http.client.*;
 import org.springframework.web.client.ResponseErrorHandler;
 import org.springframework.web.client.RestTemplate;
 
+import javax.annotation.PostConstruct;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
+import java.io.OutputStream;
+import java.util.ArrayList;
 import java.util.Collections;
-import java.util.List;
 
 @SpringBootApplication
-@ComponentScan(basePackages = { "com.test.springbootdemo" })
+@ComponentScan(basePackages = {"com.test.springbootdemo"})
+@Configuration
 public class Main extends SpringBootServletInitializer {
+
+    @Value("${app.datasource.filedir}")
+    public String datasourceDirectory;
+
+    @Value("${app.datasource.filename}")
+    public String datasourceFilename;
 
     public static void main(String[] args) throws Exception {
         SpringApplication.run(Main.class, args);
@@ -46,29 +56,9 @@ public class Main extends SpringBootServletInitializer {
         return restTemplate;
     }
 
-
     @Bean
-    CommandLineRunner runner(EmployeeService employeeService) {
-        return args -> {
-            // read json and save it to in memory map
-            ObjectMapper mapper = new ObjectMapper();
-            //String datasourceDirectory;
-            TypeReference<List<Employee>> typeReference = new TypeReference<List<Employee>>(){};
-            // String filepath = "/" + datasourceDirectory + "/" + datasourceFilename;
-            String filepath = "/datasource/db.json";
-            InputStream inputStream = TypeReference.class.getResourceAsStream(filepath);
-            try {
-                if (inputStream != null) {
-                    List<Employee> employees = mapper.readValue(inputStream,typeReference);
-                    if (employees != null && !employees.isEmpty()) {
-                        employeeService.saveEmployees(employees);
-                        System.out.println("Employees Saved!");
-                    }
-                }
-            } catch (IOException e){
-                System.out.println("Unable to save Employees: " + e.getMessage());
-            }
-        };
+    public ModelMapper modelMapper() {
+        return new ModelMapper();
     }
 
     private ClientHttpRequestFactory clientHttpRequestFactory() {
@@ -122,11 +112,50 @@ public class Main extends SpringBootServletInitializer {
         }
     }
 
+    @PostConstruct
     private void initData() {
-        // create directory in not exist
-        File directory = new File("/datasource");
-        if (!directory.exists()) {
-            directory.mkdir();
+        try {
+            String directoryPath = getDatasourceDirectory(); // "/datasource";
+            String filepath = getDatasourceFilePath(); // directoryPath + "/db.json";
+
+            File directory = new File(directoryPath);
+            File file = new File(filepath);
+            if (file.delete())
+                System.out.println("File deleted successfully");
+            else
+                System.out.println("Failed to delete the file");
+
+            // create directory if not exist
+            if (!directory.exists()) {
+                directory.mkdir();
+            }
+
+
+            if (!file.exists()) {
+                try {
+                    file.createNewFile();
+                    OutputStream output = new FileOutputStream(file);
+                    ObjectMapper mapper = new ObjectMapper();
+                    ObjectWriter writer = mapper.writer(new DefaultPrettyPrinter());
+                    writer.writeValue(output, new ArrayList<>());
+                } catch (IOException e) {
+                    System.out.println(e.getMessage());
+                } catch (Exception e) {
+                    System.out.println("Unable to save Employee: " + e);
+                    System.out.println("Unable to save Employee: " + e.getMessage());
+                }
+            }
+        } catch (Exception e) {
+            System.out.println(e);
         }
     }
+
+    String getDatasourceDirectory() {
+        return "/" + datasourceDirectory;
+    }
+
+    String getDatasourceFilePath() {
+        return "/" + datasourceDirectory + "/" + datasourceFilename;
+    }
+
 }
