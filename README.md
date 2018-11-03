@@ -5,7 +5,7 @@
 
 
 A spring boot and maven based demo project having REST endpoints to modify a ```.json``` file at a local file system
-which acts like a database. Project has all the endpoints for ```CRUD``` operations, which would
+which acts like a database. Project has all the endpoints for ```CRUD``` operations, which would be
 performed on the ```.json``` file. The project has ```Swagger, Mockito and Travis CI ``` integration as well.
 
 ## Dependencies
